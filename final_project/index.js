@@ -11,21 +11,22 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req, res, next) {
-    // Get the token from headers
-    const token = req.headers['authorization'];
+    const token = req.headers["authorization"];
 
     if (!token) {
         return res.status(403).json({ message: "Access Denied: No Token Provided" });
     }
 
-    // Verify token
-    jwt.verify(token.split(" ")[1], "your_secret_key", (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ message: "Invalid Token" });
-        }
+    const tokenParts = token.split(" ");
+    if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+        return res.status(403).json({ message: "Access Denied: Invalid Token Format" });
+    }
 
-        // Attach user information to request
-        req.user = decoded;
+    jwt.verify(tokenParts[1], "secretKey", (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: "Access Denied: Invalid Token" });
+        }
+        req.username = decoded.username; // Store username in request
         next();
     });
 });
