@@ -5,9 +5,20 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.post("/register", (req, res) => {
+    const { username, password } = req.body; // get username and password  
+
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are needed" });
+    }
+
+    // Does user exist?
+    if (users[username]) {
+        return res.status(409).json({ message: "User already exists" });
+    }
+
+    users[username] = { password: password };
+    return res.status(201).json({ message: "User registered" });
 });
 
 // Get the book list available in the shop
@@ -50,9 +61,14 @@ public_users.get('/title/:title', function (req, res) {
 });
 
 //  Get book review
-public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/review/:isbn', function (req, res) {
+    const isbn = req.params.isbn; // Get ISBN 
+
+    if (books[isbn]) {
+        return res.status(200).json(books[isbn].reviews);  
+    } else {
+        return res.status(404).json({ message: "Book not found" }); 
+    }
 });
 
 module.exports.general = public_users;
