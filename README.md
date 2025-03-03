@@ -20,4 +20,6 @@ curl -X GET "http://localhost:5000/author/Jane%20Austen"  #get books by Jane Aus
 
 The create user and login functions only need to be used if you will be adding/updating reviews. Users are not saved between sessions, so if you restart the server, you will need to register a user before logging them in.
 
+Most of the code is in the directory final_project/router, specifically general.js.
+
 This project is from the course "Developing Back-End Apps with Node.js and Express" by IBM.
